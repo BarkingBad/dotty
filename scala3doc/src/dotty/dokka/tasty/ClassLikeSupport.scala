@@ -358,11 +358,13 @@ trait ClassLikeSupport:
     val origin = if !methodSymbol.isOverriden then Origin.RegularlyDefined else
       val overridenSyms = methodSymbol.allOverriddenSymbols.map(_.owner)
       Origin.Overrides(overridenSyms.map(s => Overriden(s.name, s.dri)).toSeq)
-    import qctx.reflect._
-    if(methodSymbol.normalizedName == "andThen" && c.symbol.normalizedName == "List")
+    if(methodSymbol.normalizedName == "fun" && c.symbol.normalizedName == "CClass")
+      println(methodSymbol.owner == c.symbol)
       // println(method.returnTpt.tpe.asInstanceOf[AppliedType].args(0).typeSymbol.asInstanceOf[dotty.tools.dotc.core.Symbols.Symbol].paramInfoAsSeenFrom(typeForClass(c).asInstanceOf[AppliedType].args(0).asInstanceOf[dotty.tools.dotc.core.Types.Type])(using self.ctx.compilerContext))
       println(typeForClass(c).asInstanceOf[dotty.tools.dotc.core.Types.Type]
-        .memberInfo(methodSymbol.asInstanceOf[dotty.tools.dotc.core.Symbols.Symbol])(using self.ctx.compilerContext))
+        .memberInfo(methodSymbol.asInstanceOf[dotty.tools.dotc.core.Symbols.Symbol])(using self.ctx.compilerContext)
+      )
+
 
     mkMember(
       method.symbol,
