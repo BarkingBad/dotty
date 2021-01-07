@@ -11,7 +11,7 @@ class SearchbarComponent(val callback: (String) => List[PageEntry]):
       wrapper.classList.add("monospace")
 
       val resultA = document.createElement("a").asInstanceOf[html.Anchor]
-      resultA.href = Globals.pathToRoot + p.location
+      resultA.href = Globals.pathToRoot.toString + p.location
       resultA.text = s"${p.name}"
 
       val location = document.createElement("span")

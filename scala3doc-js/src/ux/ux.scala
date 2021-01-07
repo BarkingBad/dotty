@@ -2,21 +2,25 @@ package dotty.dokka.ux
 
 import org.scalajs.dom._
 import org.querki.jquery._
+import dotty.dokka.Globals
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSGlobal
 
 def ux =
-  window.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("DOMContentLoaded", _ => {
     Option(document.getElementById("leftToggler")).map {
-      _.onclick = _ => document.getElementById("leftColumn").classList.toggle("open")
+      _.addEventListener("click", _ => document.getElementById("leftColumn").classList.toggle("open"))
     }
-    document.getElementsByClassName("documentableElement").each({ (ths: dom.HTMLElement, e) =>
-      e.onclick = _ => ths.classList.toggle("expand")
-    }: js.ThisFunction1)
+    val documentableElements = document.getElementsByClassName("documentableElement")
+    for (i <- 0 until documentableElements.length) {
+      documentableElements(i).addEventListener("click", _ => documentableElements(i).classList.toggle("expand"))
+    }
 
-    $("#sideMenu2 span").on("click", (el: html.HTMLElement) => {
+    $("#sideMenu2 span").on("click", { (el: raw.Element) =>
       $(el).parent.toggleClass("expanded")
-    }: js.ThisFunction);
+    }: js.ThisFunction0[raw.Element, Unit])
 
-    $(".names .tab").on("click", (el: html.HTMLElement) => {
+    $(".names .tab").on("click", { (el: raw.Element) => {
       val parent = $(el).parents(".tabs").first()
       val shown = $(el).hasClass("selected")
       val single = parent.hasClass("single")
@@ -29,56 +33,20 @@ def ux =
       if (!shown) { myTab.addClass("selected") }
       if (shown && !single) myTab.removeClass("selected")
 
-      if (!shown && $(el).find(".showGraph")) {
-        showGraph()
+      if (!shown && $(el).find(".showGraph") != null) {
+        Globals.showGraph()
         $(el).find(".showGraph").removeClass("showGraph")
       }
-    }: js.ThisFunction)
+    }}: js.ThisFunction0[raw.Element, Unit])
 
-    Option(
-      Option(location.hash).map(
-        document.getElementById(_.substring(1))
-      )
-    ).map(_.classList.toggle("expand"))
+    Option(document.location.hash).flatMap { (x: String) =>
+       Option(document.getElementById(x.substring(1)))
+    }.map(_.classList.toggle("expand"))
 
     Option(document.getElementById("logo")).map(
-      _.onclick = () => window.location = pathToRoot // global variable pathToRoot is created by the html renderer
+      _.addEventListener("click", _ => window.location = Globals.pathToRoot) // global variable pathToRoot is created by the html renderer
     )
-    hljs.registerLanguage("scala", highlightDotty);
-    hljs.registerAliases(["dotty", "scala3"], "scala");
-    hljs.initHighlighting();
+    Globals.hljs.registerLanguage("scala", Globals.highlightDotty)
+    Globals.hljs.registerAliases(js.Array("dotty", "scala3"), "scala")
+    Globals.hljs.initHighlighting()
   })
-
-  def showGraph =
-    if ($("svg#graph").children().length == 0) {
-      var dotNode = document.querySelector("#dot")
-      if (dotNode){
-        var svg = d3.select("#graph");
-        var inner = svg.append("g");
-
-        // Set up zoom support
-        var zoom = d3.zoom()
-          .on("zoom", function({transform}) {
-            inner.attr("transform", transform);
-          });
-        svg.call(zoom);
-
-        var render = new dagreD3.render();
-        var g = graphlibDot.read(dotNode.text);
-        g.graph().rankDir = 'BT';
-        g.nodes().forEach(function (v) {
-          g.setNode(v, {
-            labelType: "html",
-            label: g.node(v).label,
-            style: g.node(v).style
-          });
-        });
-        g.edges().forEach(function(v) {
-          g.setEdge(v, {
-            arrowhead: "vee"
-          });
-        });
-        render(inner, g);
-      }
-    }
-

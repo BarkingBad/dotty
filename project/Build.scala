@@ -1670,9 +1670,7 @@ object Build {
           libraryDependencies ++= Seq(
             ("org.scala-js" %%% "scalajs-dom" % "1.1.0").withDottyCompat(scalaVersion.value),
             ("org.querki" %%% "jquery-facade" % "2.0").withDottyCompat(scalaVersion.value),
-          ),
-          jsDependencies += "org.webjars" % "jquery" % "2.2.1" / "jquery.js" minified "jquery.min.js"
-
+          )
         )
 
 
