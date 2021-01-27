@@ -40,7 +40,7 @@ class HierarchyTest extends ScaladocTest("hierarchy"):
               "E1" -> "C1[A, B, C]",
               "E2" -> "C1[A, B, C]"
             ),
-            graph.get.edges.map((a, b) => (a.signature.getName, b.signature.getName)).toSet
+            graph.get.edges.map{ case Edge(a, b, _) => (a.signature.getName, b.signature.getName) }.toSet
           )
         }
         if (x.getName == "E2") {
@@ -77,7 +77,7 @@ class HierarchyTest extends ScaladocTest("hierarchy"):
               "D3" -> "Object",
               "E2" -> "C1[Int, Boolean, Any]"
             ),
-            graph.get.edges.map((a, b) => (a.signature.getName, b.signature.getName)).toSet
+            graph.get.edges.map{ case Edge(a, b, _) => (a.signature.getName, b.signature.getName) }.toSet
           )
         }
         if (x.getName == "A2") {
@@ -99,7 +99,7 @@ class HierarchyTest extends ScaladocTest("hierarchy"):
               "E1" -> "C1[A, B, C]",
               "E2" -> "C1[A, B, C]"
             ),
-            graph.get.edges.map((a, b) => (a.signature.getName, b.signature.getName)).toSet
+            graph.get.edges.map{ case Edge(a, b, _) => (a.signature.getName, b.signature.getName) }.toSet
           )
         }
       }

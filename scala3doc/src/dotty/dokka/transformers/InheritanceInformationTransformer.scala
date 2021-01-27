@@ -16,7 +16,7 @@ class InheritanceInformationTransformer(using context: DocContext) extends Modul
     original.updateMembers { m =>
       val edges = getEdges(m.asLink.copy(kind = bareClasslikeKind(m.kind)), subtypes)
       val st: Seq[LinkToType] = edges.map(_._1).distinct
-      m.withKnownChildren(st).withNewGraphEdges(edges)
+      m.withKnownChildren(st).withNewGraphEdges(edges.toEdges)
     }
 
   private def getEdges(ltt: LinkToType, subtypes: Map[DRI, Seq[LinkToType]]): Seq[(LinkToType, LinkToType)] =

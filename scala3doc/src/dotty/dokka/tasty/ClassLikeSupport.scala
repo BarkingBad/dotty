@@ -60,7 +60,6 @@ trait ClassLikeSupport:
     signatureOnly: Boolean = false,
     modifiers: Seq[Modifier] = classDef.symbol.getExtraModifiers(),
   ): Member =
-
     def unpackTreeToClassDef(tree: Tree): ClassDef = tree match
       case tree: ClassDef => tree
       case TypeDef(_, tbt: TypeBoundsTree) => unpackTreeToClassDef(tbt.tpe.typeSymbol.tree)
@@ -85,9 +84,10 @@ trait ClassLikeSupport:
     }
     val selfSiangture: DSignature = typeForClass(classDef).dokkaType.asSignature
 
-    val graph = HierarchyGraph.withEdges(getSupertypesGraph(classDef,
-      LinkToType(selfSiangture, classDef.symbol.dri, bareClasslikeKind(classDef.symbol))))
-
+    val graph = HierarchyGraph.withEdges(
+      getSupertypesGraph(classDef, LinkToType(selfSiangture, classDef.symbol.dri, bareClasslikeKind(classDef.symbol)))
+        .toEdges
+    )
 
     val compositeExt =
       if signatureOnly then CompositeMemberExtension.empty

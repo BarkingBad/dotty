@@ -95,7 +95,8 @@ function showGraph() {
 
       g.edges().forEach(function(v) {
         g.setEdge(v, {
-          arrowhead: "vee"
+          arrowhead: "vee",
+          label: g.edge(v).label
         });
       });
       render(inner, g);
