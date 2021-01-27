@@ -36,7 +36,8 @@ class ScalaModuleProvider(using ctx: DocContext) extends SourceToDocumentableTra
 
     val transformers = List(
       ImplicitMembersExtensionTransformer(),
-      InheritanceInformationTransformer()
+      InheritanceInformationTransformer(),
+      SealedMarksGraphTransformer()
     )
 
     val module = new DModule(

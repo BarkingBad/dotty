@@ -22,8 +22,8 @@ object DotDiagramBuilder:
       s"""node${id} [id=node${id}, label="${getHtmlLabel(vertex, renderer)}", style="${getStyle(vertex)}"];\n"""
     }.mkString
 
-    val edges = diagram.edges.map { (from, to) =>
-      s"""node${vWithId(from)} -> node${vWithId(to)};\n"""
+    val edges = diagram.edges.map { case Edge(from, to, description) =>
+      s"""node${vWithId(from)} -> node${vWithId(to)} [label="${description}"];\n"""
     }.mkString
 
     s""" digraph g {

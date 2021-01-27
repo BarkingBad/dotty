@@ -98,9 +98,14 @@ extension (member: Member)
     val newExt = original.copy(knownChildren = knownChildren)
     putInCompositeMember(newExt)
 
-  def withNewGraphEdges(edges: Seq[(LinkToType, LinkToType)]): Member =
+  def withNewGraphEdges(edges: Seq[Edge]): Member =
     val oldExt = MemberExtension.getFrom(member).getOrElse(MemberExtension.empty)
     val newExt = oldExt.copy(graph = oldExt.graph ++ edges)
+    putInMember(newExt)
+
+  def mapGraphEdges(fun: (Edge) => Edge): Member =
+    val oldExt = MemberExtension.getFrom(member).getOrElse(MemberExtension.empty)
+    val newExt = oldExt.copy(graph = HierarchyGraph.empty ++ oldExt.graph.edges.map(fun))
     putInMember(newExt)
 
   def updateRecusivly(op: Member => Member): Member =
