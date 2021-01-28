@@ -89,6 +89,11 @@ trait ClassLikeSupport:
         .toEdges
     )
 
+    if (classDef.symbol.name == "A") then
+      classDef.symbol.children.foreach { s =>
+        println(s"Symbol normalized name: ${s.name}, isValDef: ${s.isValDef}, symbol name: ${s.name}, symbol moduleClass.name: ${s.moduleClass.name}")
+      }
+
     val compositeExt =
       if signatureOnly then CompositeMemberExtension.empty
       else CompositeMemberExtension(
