@@ -1644,7 +1644,10 @@ object Build {
             Build.testcasesOutputDir.in(Test).value,
             "scaladoc testcases",
             "scaladoc/output/testcases",
-            "master")
+            "master",
+            Seq(
+              "-source-links:github://lampepfl/dotty"
+            ))
         }.value,
 
         buildInfoKeys in Test := Seq[BuildInfoKey](
