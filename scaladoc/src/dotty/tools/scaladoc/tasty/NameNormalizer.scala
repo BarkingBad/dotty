@@ -17,10 +17,9 @@ trait NameNormalizer { self: TastyParser =>
   private val ignoredKeywords: Set[String] = Set("this")
 
   private def escapedName(name: String) =
-    val simpleIdentifierRegex = raw"(?:\w+_[^\[\(\s_]+)|\w+|[^\[\(\s\w_]+".r
+    val simpleIdentifierRegex = "([([{}]) ]|[^A-Za-z0-9$]_)".r
     name match
       case n if ignoredKeywords(n) => n
-      case n if keywords(termName(n)) => s"`$n`"
-      case simpleIdentifierRegex() => name
-      case n => s"`$n`"
+      case n if keywords(termName(n)) || simpleIdentifierRegex.findFirstIn(n).isDefined => s"`$n`"
+      case _ => name
 }

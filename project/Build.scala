@@ -1162,7 +1162,17 @@ object Build {
   // Note: the two tasks below should be one, but a bug in Tasty prevents that
   val generateScalaDocumentation = inputKey[Unit]("Generate documentation for dotty lib")
   val generateTestcasesDocumentation  = taskKey[Unit]("Generate documentation for testcases, usefull for debugging tests")
-  lazy val `scaladoc` = project.in(file("scaladoc")).asScaladoc
+
+  val SourceLinksIntegrationTest = config("sourceLinksIntegrationTest") extend Test
+
+  lazy val `scaladoc` = project.in(file("scaladoc"))
+    .configs(SourceLinksIntegrationTest)
+    .asScaladoc
+    .settings(inConfig(SourceLinksIntegrationTest)(Defaults.testSettings))
+    .settings(
+      scalaSource in SourceLinksIntegrationTest := baseDirectory.value / "test-source-links",
+      test in SourceLinksIntegrationTest := ((test in SourceLinksIntegrationTest) dependsOn generateScalaDocumentation.toTask("")).value,
+    )
   lazy val `scaladoc-nonBootstrapped` = project.in(file("scaladoc")).scaladocBasic(NonBootstrapped).settings(
     // Unit tests in scaladoc depends on scaladoc-testcases
     // we do not want to just cross compile them with bootstrapped and unbootstrapped compiler
