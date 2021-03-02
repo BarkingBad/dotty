@@ -463,7 +463,7 @@ object DottyPlugin extends AutoPlugin {
         Def.task { tastyFiles.value }
       else Def.task { originalSources }
     }.value,
-    scalacOptions ++= {
+    scalacOptions := {
       if (isDotty.value) {
         val projectName =
           if (configuration.value == Compile)
