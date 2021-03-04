@@ -343,6 +343,25 @@ object Build {
         appConfiguration.value
       )
     },
+    Compile / doc / scalacOptions ++= Seq(
+      "-external-mappings:" +
+        ".*scala.*::scaladoc3::http://dotty.epfl.ch/api/," +
+        ".*java.*::javadoc::https://docs.oracle.com/javase/8/docs/api/",
+      "-skip-by-regex:.+\\.internal($|\\..+)",
+      "-skip-by-regex:.+\\.impl($|\\..+)",
+      "-project-logo", "docs/logo.svg",
+      "-social-links:" +
+        "github::https://github.com/lampepfl/dotty," +
+        "gitter::https://gitter.im/scala/scala," +
+        "twitter::https://twitter.com/scala_lang",
+      // contains special definitions which are "transplanted" elsewhere
+      // and which therefore confuse Scaladoc when accessed from this pkg
+      "-skip-by-id:scala.runtime.stdLibPatches",
+      // MatchCase is a special type that represents match type cases,
+      // Reflect doesn't expect to see it as a standalone definition
+      // and therefore it's easier just not to document it
+      "-skip-by-id:scala.runtime.MatchCase",
+    ),
     // sbt-dotty defines `scalaInstance in doc` so we need to override it manually
     scalaInstance in doc := scalaInstance.value
   )
@@ -754,7 +773,6 @@ object Build {
     // when compiling a project that depends on scala3-staging (see sbt-dotty/sbt-test/sbt-dotty/quoted-example-project),
     // but we always need it to be present on the JVM classpath at runtime.
     dependsOn(dottyCompiler(Bootstrapped) % "provided; compile->runtime; test->test").
-    settings(commonBootstrappedSettings).
     settings(
       javaOptions := (javaOptions in `scala3-compiler-bootstrapped`).value
     )
@@ -765,7 +783,6 @@ object Build {
     // when compiling a project that depends on scala3-tasty-inspector (see sbt-dotty/sbt-test/sbt-dotty/tasty-inspector-example-project),
     // but we always need it to be present on the JVM classpath at runtime.
     dependsOn(dottyCompiler(Bootstrapped) % "provided; compile->runtime; test->test").
-    settings(commonBootstrappedSettings).
     settings(
       javaOptions := (javaOptions in `scala3-compiler-bootstrapped`).value
     )
@@ -1615,14 +1632,6 @@ object Build {
           generateDocumentation(
             classDirectory.in(Compile).value.getAbsolutePath :: Nil,
             "scaladoc", "scaladoc/output/self", VersionUtil.gitHash,
-            Seq(
-              "-siteroot", "scaladoc/documentation",
-              "-project-logo", "scaladoc/documentation/logo.svg",
-              "-external-mappings:" +
-                ".*scala.*::scaladoc3::http://dotty.epfl.ch/api/," +
-                ".*java.*::javadoc::https://docs.oracle.com/javase/8/docs/api/"
-            )
-
           )
         }.value,
         generateScalaDocumentation := Def.inputTaskDyn {
@@ -1653,26 +1662,9 @@ object Build {
           }.dependsOn(generateDocumentation(
             roots, "Scala 3", dest.getAbsolutePath, "master",
             Seq(
-              // contains special definitions which are "transplanted" elsewhere
-              // and which therefore confuse Scaladoc when accessed from this pkg
-              "-skip-by-id:scala.runtime.stdLibPatches",
-              // MatchCase is a special type that represents match type cases,
-              // Reflect doesn't expect to see it as a standalone definition
-              // and therefore it's easier just not to document it
-              "-skip-by-id:scala.runtime.MatchCase",
-              "-skip-by-regex:.+\\.internal($|\\..+)",
-              "-skip-by-regex:.+\\.impl($|\\..+)",
               "-comment-syntax", "wiki",
               "-siteroot", "docs",
-              "-project-logo", "docs/logo.svg",
-              "-external-mappings:.*java.*::javadoc::https://docs.oracle.com/javase/8/docs/api/",
-              "-social-links:" +
-                "github::https://github.com/lampepfl/dotty," +
-                "gitter::https://gitter.im/scala/scala," +
-                "twitter::https://twitter.com/scala_lang",
-              s"-source-links:" +
-                s"$stdLibRoot=github://scala/scala/v${stdlibVersion(Bootstrapped)}#src/library," +
-                s"docs=github://lampepfl/dotty/master#docs",
+              s"-source-links:docs=github://lampepfl/dotty/master#docs",
               "-doc-root-content", docRootFile.toString
             )
           ))

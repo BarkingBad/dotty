@@ -471,8 +471,7 @@ object DottyPlugin extends AutoPlugin {
           else
             s"${name.value}-${configuration.value}"
         Seq(
-          "-project", projectName,
-          "-from-tasty"
+          "-project", projectName
         )
       }
       else
